@@ -363,14 +363,27 @@
  @param characteristic The characteristic whose value has been retrieved.
  @param error If an error occured, the cause of the failure.
  */
+/**
+ *  !!!: This method has been modified by Comm-N-Sense Corp.
+ *  We found that there is a 8x gain in throughput when sending large amounts of data using
+ *  notifications versus the traditional method of reading characteristics. The original code had a
+ *  time issue where notifications were being received too fast. The delegate would be passed a
+ *  pointer to the characteristic, but the underlying object would change before the delegate had an
+ *  opportunity to read the value resulting in the delegate receiving many copies of the last value
+ *  sent. The solution was to pass the characteristic's value itself to the delegate.
+ */
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     __weak YMSCBPeripheral *this = self;
+    NSData *value = characteristic.value;  // Added by Comm-N-Sense Corp.
+
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         YMSCBService *btService = [this findService:characteristic.service];
         YMSCBCharacteristic *yc = [btService findCharacteristic:characteristic];
         
         if (yc.cbCharacteristic.isNotifying) {
-            [btService notifyCharacteristicHandler:yc error:error];
+            // !!!: Modified by Comm-N-Sense Corp.
+            // Original: [btService notifyCharacteristicHandler:yc error:error];
+            [btService notifyCharacteristicHandler:yc value:value error:error];
             
         } else {
             if ([yc.readCallbacks count] > 0) {
@@ -443,7 +456,9 @@
             [yc executeWriteCallback:error];
         } else {
             // TODO is this dangerous?
-            [btService notifyCharacteristicHandler:yc error:error];
+            // !!!: Modified by Comm-N-Sense Corp.
+            // Original: [btService notifyCharacteristicHandler:yc error:error];
+            [btService notifyCharacteristicHandler:yc value:characteristic.value error:error];
         }
         
         if ([this.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {

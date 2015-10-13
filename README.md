@@ -1,3 +1,10 @@
+# Comm-N-Sense Mod of YmsCB
+### To update this repo with new upstream commits
+1. `git pull --all && git checkout cns-custom`
+1. `git remote add upstream https://github.com/kickingvegas/YmsCoreBluetooth.git`
+1. `git fetch upstream --prune`
+1. `git merge upstream/master`
+
 # YmsCoreBluetooth v1.11.0
 A block-based framework for building Bluetooth 4.0 Low Energy (aka Smart or LE) iOS 8 or OS X 10.9 applications using the CoreBluetooth API. Includes *Deanna* and *DeannaMac*, applications to communicate with a [TI SensorTag](http://processors.wiki.ti.com/index.php/Bluetooth_SensorTag) for iOS and OS X respectively.
 

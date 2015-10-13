@@ -185,7 +185,9 @@ typedef NS_ENUM(NSInteger, YMSCBCallbackTransactionType) {
  @param yc Characteristic receiving update.
  @param error Error object.
  */
-- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error;
+// !!!: Modified by Comm-N-Sense Corp.
+// Original: - (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc error:(NSError *)error;
+- (void)notifyCharacteristicHandler:(YMSCBCharacteristic *)yc value:(NSData *)value error:(NSError *)error;
 
 
 /**
