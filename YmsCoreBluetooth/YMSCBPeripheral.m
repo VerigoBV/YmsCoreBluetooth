@@ -374,7 +374,7 @@
  */
 - (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     __weak YMSCBPeripheral *this = self;
-    NSData *value = characteristic.value;  // Added by Comm-N-Sense Corp.
+    NSData *value = characteristic.value.copy;  // Added by Comm-N-Sense Corp.
 
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         YMSCBService *btService = [this findService:characteristic.service];
@@ -447,6 +447,8 @@
  */
 - (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
     __weak YMSCBPeripheral *this = self;
+	NSData *value = characteristic.value.copy;  // Added by Comm-N-Sense Corp.
+
     _YMS_PERFORM_ON_MAIN_THREAD(^{
         
         YMSCBService *btService = [this findService:characteristic.service];
@@ -458,7 +460,7 @@
             // TODO is this dangerous?
             // !!!: Modified by Comm-N-Sense Corp.
             // Original: [btService notifyCharacteristicHandler:yc error:error];
-            [btService notifyCharacteristicHandler:yc value:characteristic.value error:error];
+            [btService notifyCharacteristicHandler:yc value:value error:error];
         }
         
         if ([this.delegate respondsToSelector:@selector(peripheral:didWriteValueForCharacteristic:error:)]) {
